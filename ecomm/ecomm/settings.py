@@ -106,9 +106,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # settings for email
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'chandolkarshreyas001@gmail.com'
-EMAIL_HOST_PASSWORD = 'shreyas@010102'
+EMAIL_PORT = 465
+EMAIL_HOST_USER = 'your mail ID'
+EMAIL_HOST_PASSWORD = 'your password'
 EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 
