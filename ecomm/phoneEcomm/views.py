@@ -1,19 +1,18 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-import pyotp
-import jwt
-from django.conf import settings
-from django.core.mail import send_mail
-from .models import User
-from .serializers import *
-from django.contrib.auth import authenticate
-# from passlib.hash import django_pbkdf2_sha256 as handler
 from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
-from django.core.exceptions import ValidationError
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.settings import api_settings
+from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.core.mail import send_mail
+from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
+from .models import *
+from .serializers import *
+import pyotp
+import jwt
 
 def generateOTP():
     global totp
@@ -101,7 +100,6 @@ class LoginAPIView(APIView):
         email = request.data['email']
         print('email', email)
         filter_data = User.objects.filter(email=email).values('is_active')
-        print('filter_data', filter_data)
         if filter_data.exists():
             val = filter_data[0]['is_active']
             
@@ -113,7 +111,7 @@ class LoginAPIView(APIView):
                 user = authenticate(
                     username=request.data['email'], password=request.data['password'])
                 update_last_login(None, user)
-                if user is not None and user.is_confirmed:  # change according to yourself
+                if user is not None and user.is_confirmed and user.is_active:  # change according to yourself
                     jwt_payload_handler = api_settings.JWT_PAYLOAD_HANDLER
                     jwt_encode_handler = api_settings.JWT_ENCODE_HANDLER
                     payload = jwt_payload_handler(user)
@@ -127,3 +125,12 @@ class LoginAPIView(APIView):
 
         else:
             return Response({'Error': 'Not a valid user'}, status=status.HTTP_401_UNAUTHORIZED)
+
+class PhoneAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PhoneSerializer
+
+    def get(self, request):
+        phones = Phone.objects.all()
+        serializer = PhoneSerializer(phones, many=True)
+        return Response(serializer.data)
