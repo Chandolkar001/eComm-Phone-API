@@ -5,7 +5,6 @@ from rest_framework_jwt.serializers import VerifyJSONWebTokenSerializer
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework_jwt.settings import api_settings
 from django.conf import settings
-from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import update_last_login
@@ -23,7 +22,7 @@ def generateOTP():
     print(one_time)
     return one_time
 
-# verifying OTP
+# verifying OTP for user
 
 
 def verifyOTP(one_time):
